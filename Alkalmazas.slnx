@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="Alkalmazas/Alkalmazas.csproj" />
+  <Project Path="Models/Models.csproj" />
+</Solution>

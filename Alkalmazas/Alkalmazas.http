@@ -1,0 +1,6 @@
+@Alkalmazas_HostAddress = http://localhost:5077
+
+GET {{Alkalmazas_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
