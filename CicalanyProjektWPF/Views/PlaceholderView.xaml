@@ -1,0 +1,11 @@
+<UserControl x:Class="Cicalany.Wpf.Views.PlaceholderView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Border Width="520" Padding="38" VerticalAlignment="Center" HorizontalAlignment="Center"
+            Background="{StaticResource CardBrush}" CornerRadius="14">
+        <StackPanel>
+            <TextBlock Text="{Binding Title}" FontSize="27" FontWeight="Bold" />
+            <TextBlock Text="{Binding Message}" Foreground="{StaticResource MutedBrush}" Margin="0,10,0,0" />
+        </StackPanel>
+    </Border>
+</UserControl>

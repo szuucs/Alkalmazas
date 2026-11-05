@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="Alkalmazas/Alkalmazas.csproj" />
+  <Project Path="CicalanyProjektWPF/CicalanyProjektWPF.csproj" Id="98aca11e-88be-4fbe-9662-c80f59e815f8" />
   <Project Path="Models/Models.csproj" />
 </Solution>
