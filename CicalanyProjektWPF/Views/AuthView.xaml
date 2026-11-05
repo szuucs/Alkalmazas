@@ -5,19 +5,18 @@
         <Border Width="450" Padding="38" VerticalAlignment="Center" HorizontalAlignment="Center"
                 Background="{StaticResource CardBrush}" CornerRadius="14">
             <StackPanel>
-                <TextBlock Text="Üdv a katalógusban!" FontSize="27" FontWeight="Bold" />
-                <TextBlock Text="Bejelentkezés meglévő fiókkal, vagy új fiók létrehozása."
-                           Foreground="{StaticResource MutedBrush}" Margin="0,10,0,28" />
+                <TextBlock Text="Üdv a cicalány katalógusban!" FontSize="27" FontWeight="Bold" Margin="0,5,0,40"/>
+
                 <TextBlock Text="Felhasználónév" Margin="0,0,0,8" />
                 <TextBox Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}" MaxLength="64" />
                 <TextBlock Text="Jelszó" Margin="0,22,0,8" />
                 <PasswordBox x:Name="PasswordInput" PasswordChanged="PasswordInput_OnPasswordChanged" />
-                <StackPanel Orientation="Horizontal" Margin="0,28,0,0">
-                    <Button Content="Belépés" Style="{StaticResource PrimaryButton}" Command="{Binding LoginCommand}" />
-                    <Button Content="Regisztráció" Command="{Binding RegisterCommand}" />
+                <TextBlock Text="Felhasználónév legalább 3 karakter, illetve jelszó minimum 6."
+                           Foreground="{StaticResource MutedBrush}" FontSize="11" />
+                <StackPanel Margin="0,38,0,0" HorizontalAlignment="Center" Orientation="Vertical">
+                    <Button Content="Belépés" Width="180" Margin="0,0,0,10" Style="{StaticResource PrimaryButton}" Command="{Binding LoginCommand}" />
+                    <Button Content="Regisztráció" Width="180" Command="{Binding RegisterCommand}" />
                 </StackPanel>
-                <TextBlock Text="Regisztrációnál legalább 3 karakteres név és 6 karakteres jelszó kell."
-                           Foreground="{StaticResource MutedBrush}" FontSize="12" Margin="0,18,0,0" />
             </StackPanel>
         </Border>
     </Grid>

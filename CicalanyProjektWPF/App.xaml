@@ -8,8 +8,8 @@
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
 
         <SolidColorBrush x:Key="BackgroundBrush" Color="#16131D" />
-        <SolidColorBrush x:Key="CardBrush" Color="#24202D" />
-        <SolidColorBrush x:Key="AccentBrush" Color="#F0A9D7" />
+        <SolidColorBrush x:Key="CardBrush" Color="#54304c" />
+        <SolidColorBrush x:Key="AccentBrush" Color="#fa96e4" />
         <SolidColorBrush x:Key="TextBrush" Color="#F8F4FA" />
         <SolidColorBrush x:Key="MutedBrush" Color="#BFB4C9" />
 
@@ -65,7 +65,7 @@
             <Setter Property="Background" Value="{StaticResource CardBrush}" />
             <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
             <Setter Property="BorderThickness" Value="0" />
-            <Setter Property="RowBackground" Value="#352D3F" />
+            <Setter Property="RowBackground" Value="#752865" />
             <Setter Property="AlternatingRowBackground" Value="#302838" />
             <Setter Property="HeadersVisibility" Value="Column" />
             <Setter Property="GridLinesVisibility" Value="None" />
