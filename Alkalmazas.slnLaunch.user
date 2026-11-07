@@ -1,0 +1,19 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "Alkalmazas\\Alkalmazas.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "CicalanyProjektWPF\\CicalanyProjektWPF.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "Models\\Models.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

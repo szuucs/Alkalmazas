@@ -1,0 +1,34 @@
+<UserControl x:Class="Cicalany.Wpf.Views.CartView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid Margin="30">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <DockPanel Margin="0,0,0,22">
+            <TextBlock Text="Kosaram" FontSize="30" FontWeight="Bold" DockPanel.Dock="Left" />
+        </DockPanel>
+        <DataGrid Grid.Row="1" ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem, Mode=TwoWay}"
+                  AutoGenerateColumns="False" AlternationCount="2" CanUserResizeRows="False"
+                  CanUserResizeColumns="False" CanUserReorderColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Cicálány" Binding="{Binding Name}" Width="*" />
+                <DataGridTextColumn Header="Életkor" Binding="{Binding AgeLabel}" Width="110" />
+                <DataGridTextColumn Header="Magasság" Binding="{Binding HeightLabel}" Width="120" />
+                <DataGridTextColumn Header="Súly" Binding="{Binding WeightLabel}" Width="110" />
+            </DataGrid.Columns>
+        </DataGrid>
+        <Border Grid.Row="2" Background="{StaticResource CardBrush}" CornerRadius="8" Padding="20" Margin="0,18,0,0">
+            <DockPanel>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
+                    <Button Content="Eltávolítás" Command="{Binding RemoveCommand}" />
+                    <Button Content="Rendelés" Command="{Binding CheckoutCommand}" Style="{StaticResource PrimaryButton}"
+                            IsEnabled="{Binding HasItems}" Margin="0" />
+                </StackPanel>
+                <TextBlock Text="{Binding CountLabel}" FontSize="19" FontWeight="Bold" VerticalAlignment="Center" />
+            </DockPanel>
+        </Border>
+    </Grid>
+</UserControl>

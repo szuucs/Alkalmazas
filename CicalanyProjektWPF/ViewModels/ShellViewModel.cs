@@ -17,6 +17,9 @@ public sealed class ShellViewModel : ViewModelBase
     private bool _isAuthenticated;
     public bool IsAuthenticated { get => _isAuthenticated; private set => Set(ref _isAuthenticated, value); }
 
+    /// <summary>A bejelentkezett felhasználó azonosítója (kijelentkezve 0).</summary>
+    public int UserId { get; private set; }
+
     private string _userName = "";
     public string UserName { get => _userName; private set => Set(ref _userName, value); }
 
@@ -24,30 +27,46 @@ public sealed class ShellViewModel : ViewModelBase
     public string Status { get => _status; private set => Set(ref _status, value); }
 
     public ICommand CatalogCommand { get; }
+    public ICommand CartCommand { get; }
     public ICommand LogoutCommand { get; }
 
     public ShellViewModel()
     {
         CatalogCommand = new RelayCommand(GoCatalog);
+        CartCommand = new RelayCommand(GoCart);
         LogoutCommand = new RelayCommand(Logout);
         CurrentPage = new AuthViewModel(this);
     }
 
     public void SignedIn(LoginResult login)
     {
-        Api.SetToken(login.Token);
+        UserId = login.UserId;
         UserName = login.UserName;
         IsAuthenticated = true;
         ShowMessage($"Sikeres bejelentkezés: {login.UserName}");
         GoCatalog();
     }
 
-    /// <summary>Egyelőre helyőrző oldal; ide kerül majd a katalógus.</summary>
     public void GoCatalog()
     {
         if (!IsAuthenticated) return;
-        CurrentPage = new PlaceholderViewModel("Katalógus",
-            "Ez az oldal még nincs kész. A bejelentkezés és a főablak már működik.");
+        var page = new CatalogViewModel(this);
+        CurrentPage = page;
+        _ = page.LoadAsync();
+    }
+
+    public void GoCart()
+    {
+        if (!IsAuthenticated) return;
+        var page = new CartViewModel(this);
+        CurrentPage = page;
+        _ = page.LoadAsync();
+    }
+
+    public void GoCheckout()
+    {
+        if (!IsAuthenticated) return;
+        CurrentPage = new CheckoutViewModel(this);
     }
 
     public void ShowMessage(string message) => Status = message;
@@ -55,8 +74,8 @@ public sealed class ShellViewModel : ViewModelBase
 
     private void Logout()
     {
-        Api.SetToken(null);
         IsAuthenticated = false;
+        UserId = 0;
         UserName = "";
         CurrentPage = new AuthViewModel(this);
         ShowMessage("Kijelentkeztél.");
