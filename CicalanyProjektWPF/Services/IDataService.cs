@@ -13,6 +13,7 @@ public interface IDataService
     Task<LoginResult> LoginAsync(string userName, string password);
 
     Task<List<CatGirlDto>> GetCatGirlsAsync();
+    Task<CatGirlDto> CreateCatGirlAsync(CatGirlInput input);
 
     Task<List<CartItemDto>> GetCartAsync(int userId);
     Task<CartItemDto> AddToCartAsync(int userId, int catGirlId);

@@ -6,11 +6,15 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <StackPanel Margin="0,0,0,18">
-            <TextBlock Text="Cicálányok" FontWeight="Bold" FontSize="30" />
-            <TextBlock Text="Válaszd ki, kiket szeretnél a kosárba tenni."
-                       Foreground="{StaticResource MutedBrush}" FontSize="13" Margin="0,7,0,0" />
-        </StackPanel>
+        <DockPanel Margin="0,0,16,18">
+            <Button Content="+ Új cicalány" Command="{Binding NewCommand}" Style="{StaticResource PrimaryButton}"
+                    DockPanel.Dock="Right" VerticalAlignment="Center" Margin="0" />
+            <StackPanel>
+                <TextBlock Text="Cicalányok" FontWeight="Bold" FontSize="30" />
+                <TextBlock Text="Válaszd ki, kiket szeretnél a kosárba tenni."
+                           Foreground="{StaticResource MutedBrush}" FontSize="13" Margin="0,7,0,0" />
+            </StackPanel>
+        </DockPanel>
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
             <ItemsControl ItemsSource="{Binding CatGirls}">
                 <ItemsControl.ItemsPanel>
@@ -27,6 +31,10 @@
                                            Foreground="{StaticResource AccentBrush}" />
                                 <TextBlock Text="{Binding Summary}" Foreground="{StaticResource MutedBrush}"
                                            FontSize="12" Margin="0,6,0,0" />
+                                <TextBlock Text="{Binding Description}" Foreground="{StaticResource MutedBrush}"
+                                           FontSize="12" FontStyle="Italic" TextWrapping="Wrap" MaxHeight="52"
+                                           TextTrimming="CharacterEllipsis" Margin="0,8,0,0"
+                                           Visibility="{Binding HasDescription, Converter={StaticResource BoolToVisibility}}" />
                                 <Button Content="Kosárba" Style="{StaticResource PrimaryButton}" Margin="0,16,0,0"
                                         HorizontalAlignment="Left"
                                         CommandParameter="{Binding}"

@@ -55,6 +55,12 @@ public sealed class ShellViewModel : ViewModelBase
         _ = page.LoadAsync();
     }
 
+    public void GoAddCatGirl()
+    {
+        if (!IsAuthenticated) return;
+        CurrentPage = new AddCatGirlViewModel(this);
+    }
+
     public void GoCart()
     {
         if (!IsAuthenticated) return;

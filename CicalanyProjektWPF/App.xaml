@@ -8,14 +8,21 @@
         <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
 
         <SolidColorBrush x:Key="BackgroundBrush" Color="#16131D" />
-        <SolidColorBrush x:Key="CardBrush" Color="#54304c" />
-        <SolidColorBrush x:Key="AccentBrush" Color="#fa96e4" />
-        <SolidColorBrush x:Key="TextBrush" Color="#F8F4FA" />
+        <SolidColorBrush x:Key="CardBrush" Color="#24202D" />
+        <SolidColorBrush x:Key="AccentBrush" Color="#F0A9D7" />
+        <SolidColorBrush x:Key="TextBrush" Color="#ffffff" />
         <SolidColorBrush x:Key="MutedBrush" Color="#BFB4C9" />
 
         <Style TargetType="TextBlock">
             <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
             <Setter Property="TextWrapping" Value="Wrap" />
+            <!-- Fekete körvonal a szövegek körül (ShadowDepth 0 = nincs eltolás, csak a keret).
+                 Erősebb keret: nagyobb BlurRadius; vékonyabb: kisebb. -->
+            <Setter Property="Effect">
+                <Setter.Value>
+                    <DropShadowEffect Color="Black" ShadowDepth="0" BlurRadius="3" Opacity="1" />
+                </Setter.Value>
+            </Setter>
         </Style>
         <Style TargetType="TextBox">
             <Setter Property="Background" Value="#332C3B" />
@@ -44,6 +51,31 @@
             <Setter Property="MinHeight" Value="38" />
             <Setter Property="Margin" Value="0,0,8,0" />
             <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Bd" CornerRadius="10"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"
+                                      RecognizesAccessKey="True" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.85" />
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.7" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.45" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
         <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="Background" Value="{StaticResource AccentBrush}" />
@@ -82,47 +114,6 @@
             <Setter Property="Padding" Value="10,9" />
             <Setter Property="FontWeight" Value="SemiBold" />
         </Style>
-        <!-- Naptár: világos háttér, sötét szöveg. A saját Button/TextBlock stílusokat itt felülírjuk,
-             különben a fehér szöveg a világos naptáron alig látszana. -->
-        <Style x:Key="LightCalendarStyle" TargetType="Calendar">
-            <Setter Property="Background" Value="#F8F4FA" />
-            <Setter Property="Foreground" Value="#1D1522" />
-            <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
-            <Setter Property="BorderThickness" Value="2" />
-            <Style.Resources>
-                <Style TargetType="TextBlock">
-                    <Setter Property="Foreground" Value="#1D1522" />
-                </Style>
-                <Style TargetType="Button">
-                    <Setter Property="Foreground" Value="#1D1522" />
-                    <Setter Property="Background" Value="Transparent" />
-                    <Setter Property="MinHeight" Value="0" />
-                    <Setter Property="Margin" Value="0" />
-                    <Setter Property="Padding" Value="1" />
-                    <Setter Property="FontSize" Value="12" />
-                </Style>
-            </Style.Resources>
-        </Style>
-        <Style TargetType="DatePicker">
-            <Setter Property="MinHeight" Value="38" />
-            <Setter Property="FontSize" Value="14" />
-            <Setter Property="Foreground" Value="#1D1522" />
-            <Setter Property="Background" Value="#F8F4FA" />
-            <Setter Property="BorderBrush" Value="{StaticResource AccentBrush}" />
-            <Setter Property="CalendarStyle" Value="{StaticResource LightCalendarStyle}" />
-            <Style.Resources>
-                <Style TargetType="TextBlock">
-                    <Setter Property="Foreground" Value="#1D1522" />
-                </Style>
-                <Style TargetType="Button">
-                    <Setter Property="Foreground" Value="#1D1522" />
-                    <Setter Property="Background" Value="Transparent" />
-                    <Setter Property="MinHeight" Value="0" />
-                    <Setter Property="Margin" Value="3,0" />
-                    <Setter Property="Padding" Value="1" />
-                </Style>
-            </Style.Resources>
-        </Style>
         <Style TargetType="Slider">
             <Setter Property="Minimum" Value="0" />
             <Setter Property="Maximum" Value="100" />
@@ -137,5 +128,6 @@
         <DataTemplate DataType="{x:Type vm:CatalogViewModel}"><views:CatalogView /></DataTemplate>
         <DataTemplate DataType="{x:Type vm:CartViewModel}"><views:CartView /></DataTemplate>
         <DataTemplate DataType="{x:Type vm:CheckoutViewModel}"><views:CheckoutView /></DataTemplate>
+        <DataTemplate DataType="{x:Type vm:AddCatGirlViewModel}"><views:AddCatGirlView /></DataTemplate>
     </Application.Resources>
 </Application>
