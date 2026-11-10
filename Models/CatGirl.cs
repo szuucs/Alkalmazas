@@ -13,6 +13,9 @@ namespace Models
         public double HeightCm { get; set; }
         public double WeightKg { get; set; }
 
+        [MaxLength(300)]
+        public string? ImagePath { get; set; }
+
         [MaxLength(30)]
         public string Phone { get; set; } = string.Empty;
 

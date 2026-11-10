@@ -8,8 +8,8 @@ namespace Cicalany.Wpf.ViewModels;
 /// <summary>A főablak nézetmodellje: ez tartja a bejelentkezési állapotot és azt, hogy melyik oldal látszik.</summary>
 public sealed class ShellViewModel : ViewModelBase
 {
-    // Bejelentkezés és regisztráció az API-n; a többi adat egyelőre helyi.
-    public IDataService Api { get; } = new LocalDataService();
+    // A katalógust, hirdetéseket és rendeléseket is az API kezeli.
+    public IDataService Api { get; } = new ApiDataService();
 
     private object _currentPage = null!;
     public object CurrentPage { get => _currentPage; private set => Set(ref _currentPage, value); }

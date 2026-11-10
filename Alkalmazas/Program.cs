@@ -1,5 +1,6 @@
 using Alkalmazas.Data;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 
 namespace Alkalmazas
 {
@@ -19,6 +20,16 @@ namespace Alkalmazas
                 ));
 
             var app = builder.Build();
+
+            var imageFolder = Path.Combine(app.Environment.ContentRootPath, "App_Data", "Images");
+            using (var scope = app.Services.CreateScope())
+                SeedData.Initialize(scope.ServiceProvider.GetRequiredService<AppDbContext>(), imageFolder);
+
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(imageFolder),
+                RequestPath = "/images"
+            });
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

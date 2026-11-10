@@ -10,6 +10,7 @@ public sealed class CatGirlDto
 {
     public int Id { get; set; }
     public string Name { get; set; } = "";
+    public string? ImagePath { get; set; }
     public int Age { get; set; }
     public double HeightCm { get; set; }
     public double WeightKg { get; set; }
@@ -57,4 +58,4 @@ public sealed class OrderDto
 
 /// <summary>Új cicálány adatai (a leírás nem kötelező).</summary>
 public sealed record CatGirlInput(string Name, int Age, double HeightCm, double WeightKg,
-    string Phone, string Email, string? Description);
+    string Phone, string Email, string? Description, string? ImagePath = null);

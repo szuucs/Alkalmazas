@@ -27,6 +27,18 @@
                         <Border Width="236" Margin="0,0,18,18" Padding="18" CornerRadius="12"
                                 Background="{StaticResource CardBrush}">
                             <StackPanel>
+                                <Image Source="{Binding ImagePath}" Height="220" Stretch="Uniform" Margin="0,0,0,14"
+                                       AutomationProperties.Name="{Binding Name}">
+                                    <Image.Style>
+                                        <Style TargetType="Image">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding ImagePath}" Value="{x:Null}">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Image.Style>
+                                </Image>
                                 <TextBlock Text="{Binding Name}" FontSize="20" FontWeight="Bold"
                                            Foreground="{StaticResource AccentBrush}" />
                                 <TextBlock Text="{Binding Summary}" Foreground="{StaticResource MutedBrush}"

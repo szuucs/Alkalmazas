@@ -40,6 +40,10 @@ namespace Alkalmazas.Migrations
                     b.Property<double>("HeightCm")
                         .HasColumnType("double");
 
+                    b.Property<string>("ImagePath")
+                        .HasMaxLength(300)
+                        .HasColumnType("varchar(300)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)

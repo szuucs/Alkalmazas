@@ -15,15 +15,17 @@ namespace Alkalmazas
         // Hibaüzenetet ad vissza, vagy null-t, ha minden rendben van
         public static string? CheckCatGirl(CatGirlRequest request)
         {
-            var name = request.Name.Trim();
-            var phone = request.Phone.Trim();
-            var email = request.Email.Trim();
+            var name = request.Name?.Trim() ?? "";
+            var phone = request.Phone?.Trim() ?? "";
+            var email = request.Email?.Trim() ?? "";
 
             if (name.Length == 0) return "A név megadása kötelező.";
             if (name.Length > 100) return "A név legfeljebb 100 karakter lehet.";
             if (request.Age < 18 || request.Age > 40) return "Az életkor 18 és 40 év közé essen.";
-            if (request.HeightCm < 130 || request.HeightCm > 190) return "A magasság 130 és 190 cm közé essen.";
-            if (request.WeightKg < 10 || request.WeightKg > 300) return "A súly 10 és 300 kg közé essen.";
+            if (!double.IsFinite(request.HeightCm) || request.HeightCm < 0 || request.HeightCm > 300)
+                return "A magasság 0 és 300 cm közé essen.";
+            if (!double.IsFinite(request.WeightKg) || request.WeightKg < 0 || request.WeightKg > 500)
+                return "A súly 0 és 500 kg közé essen.";
             if (phone.Length == 0) return "A telefonszám megadása kötelező.";
             if (!IsValidPhone(phone)) return "A telefonszám formátuma hibás (pl. +36 30 123 4567).";
             if (email.Length == 0) return "Az e-mail cím megadása kötelező.";

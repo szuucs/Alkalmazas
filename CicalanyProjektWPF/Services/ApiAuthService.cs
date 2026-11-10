@@ -9,7 +9,7 @@ namespace Cicalany.Wpf.Services;
 public sealed class ApiAuthService
 {
     // Az API http indítási profiljának címe. A kliens több kéréshez is újrahasználható.
-    private static readonly HttpClient DefaultClient = new()
+    internal static readonly HttpClient DefaultClient = new()
     {
         BaseAddress = new Uri("http://localhost:5077/"),
         Timeout = TimeSpan.FromSeconds(15)
@@ -56,7 +56,7 @@ public sealed class ApiAuthService
         }
     }
 
-    private static async Task<string> ReadErrorAsync(HttpResponseMessage response)
+    internal static async Task<string> ReadErrorAsync(HttpResponseMessage response)
     {
         var fallback = $"Az API elutasította a kérést (HTTP {(int)response.StatusCode}).";
         var body = await response.Content.ReadAsStringAsync();

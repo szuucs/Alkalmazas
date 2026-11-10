@@ -2,6 +2,7 @@ using Alkalmazas.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using System.Text.Json;
 
 namespace Alkalmazas.Controllers
 {
@@ -10,10 +11,12 @@ namespace Alkalmazas.Controllers
     public class CatGirlsController : ControllerBase
     {
         private readonly AppDbContext _db;
+        private readonly string _imageFolder;
 
-        public CatGirlsController(AppDbContext db)
+        public CatGirlsController(AppDbContext db, IWebHostEnvironment environment)
         {
             _db = db;
+            _imageFolder = Path.Combine(environment.ContentRootPath, "App_Data", "Images");
         }
 
         // GET api/catgirls
@@ -39,7 +42,21 @@ namespace Alkalmazas.Controllers
 
         // POST api/catgirls
         [HttpPost]
-        public async Task<ActionResult<CatGirl>> Create(CatGirlRequest request)
+        public Task<ActionResult<CatGirl>> Create(CatGirlRequest request) => CreateCatGirl(request, null);
+
+        // Az űrlap adatait és a választható képet egy kérésben fogadja.
+        [HttpPost("with-image")]
+        public async Task<ActionResult<CatGirl>> CreateWithImage([FromForm] string details, IFormFile? image)
+        {
+            // JSON-ban a tizedespont a számítógép nyelvétől függetlenül működik.
+            CatGirlRequest? request;
+            try { request = JsonSerializer.Deserialize<CatGirlRequest>(details, new JsonSerializerOptions(JsonSerializerDefaults.Web)); }
+            catch (JsonException) { return BadRequest("A hirdetés adatai nem olvashatók."); }
+            if (request == null) return BadRequest("A hirdetés adatai kötelezők.");
+            return await CreateCatGirl(request, image);
+        }
+
+        private async Task<ActionResult<CatGirl>> CreateCatGirl(CatGirlRequest request, IFormFile? image)
         {
             var error = InputValidation.CheckCatGirl(request);
 
@@ -51,8 +68,33 @@ namespace Alkalmazas.Controllers
             var cat = new CatGirl();
             Apply(cat, request);
 
-            _db.CatGirls.Add(cat);
-            await _db.SaveChangesAsync();
+            string? savedFile = null;
+            if (image != null)
+            {
+                var extension = Path.GetExtension(image.FileName).ToLowerInvariant();
+                if (extension is not (".jpg" or ".jpeg" or ".png"))
+                    return BadRequest("A kép JPG vagy PNG fájl legyen.");
+
+                var fileName = Guid.NewGuid().ToString("N") + extension;
+                savedFile = Path.Combine(_imageFolder, fileName);
+                cat.ImagePath = "/images/" + fileName;
+            }
+
+            try
+            {
+                if (savedFile != null)
+                {
+                    await using var output = System.IO.File.Create(savedFile);
+                    await image!.CopyToAsync(output);
+                }
+                _db.CatGirls.Add(cat);
+                await _db.SaveChangesAsync();
+            }
+            catch
+            {
+                if (savedFile != null && System.IO.File.Exists(savedFile)) System.IO.File.Delete(savedFile);
+                throw;
+            }
 
             return CreatedAtAction(nameof(GetById), new { id = cat.Id }, cat);
         }
