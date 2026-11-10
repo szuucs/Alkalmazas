@@ -9,10 +9,6 @@
       {
         "Path": "CicalanyProjektWPF\\CicalanyProjektWPF.csproj",
         "Action": "Start"
-      },
-      {
-        "Path": "Models\\Models.csproj",
-        "Action": "Start"
       }
     ]
   }

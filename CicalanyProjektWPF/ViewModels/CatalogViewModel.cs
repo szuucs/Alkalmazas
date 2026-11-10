@@ -12,11 +12,13 @@ public sealed class CatalogViewModel : ViewModelBase
     public ObservableCollection<CatGirlDto> CatGirls { get; } = new();
     public bool IsEmpty => CatGirls.Count == 0;
     public ICommand AddToCartCommand { get; }
+    public ICommand NewCommand { get; }
 
     public CatalogViewModel(ShellViewModel shell)
     {
         _shell = shell;
         AddToCartCommand = new AsyncCommand<CatGirlDto>(AddToCartAsync, _shell.ShowError);
+        NewCommand = new RelayCommand(_shell.GoAddCatGirl);
     }
 
     public async Task LoadAsync()

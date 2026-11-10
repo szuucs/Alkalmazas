@@ -15,7 +15,7 @@
                            Foreground="{StaticResource MutedBrush}" FontSize="11" />
                 <StackPanel Margin="0,38,0,0" HorizontalAlignment="Center" Orientation="Vertical">
                     <Button Content="Belépés" Width="180" Margin="0,0,0,10" Style="{StaticResource PrimaryButton}" Command="{Binding LoginCommand}" />
-                    <Button Content="Regisztráció" Width="180" Command="{Binding RegisterCommand}" />
+                    <Button Content="Regisztráció" Width="180" Margin="0,0,0,10" Command="{Binding RegisterCommand}" />
                 </StackPanel>
             </StackPanel>
         </Border>

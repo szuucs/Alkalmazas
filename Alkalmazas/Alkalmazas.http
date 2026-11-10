@@ -1,6 +1,105 @@
 @Alkalmazas_HostAddress = http://localhost:5077
 
-GET {{Alkalmazas_HostAddress}}/weatherforecast/
-Accept: application/json
+### ================= USERS =================
+
+### Regisztráció (POST)
+POST {{Alkalmazas_HostAddress}}/api/users
+Content-Type: application/json
+
+{ "name": "teszt", "password": "teszt123" }
+
+### Összes felhasználó (GET)
+GET {{Alkalmazas_HostAddress}}/api/users
+
+### Egy felhasználó (GET)
+GET {{Alkalmazas_HostAddress}}/api/users/1
+
+### Módosítás (PUT) - üres jelszónál a jelszó nem változik
+PUT {{Alkalmazas_HostAddress}}/api/users/1
+Content-Type: application/json
+
+{ "name": "teszt2", "password": "ujjelszo123" }
+
+### Törlés (DELETE)
+DELETE {{Alkalmazas_HostAddress}}/api/users/1
+
+### SAJÁT: bejelentkezés (GET)
+GET {{Alkalmazas_HostAddress}}/api/users/login?name=teszt&password=teszt123
+
+### ================= CATGIRLS =================
+
+### Létrehozás (POST)
+POST {{Alkalmazas_HostAddress}}/api/catgirls
+Content-Type: application/json
+
+{
+  "name": "Mirci",
+  "age": 22,
+  "heightCm": 163,
+  "weightKg": 52,
+  "phone": "+36 30 123 4567",
+  "email": "mirci@pelda.hu",
+  "description": "Szelíd, dorombolós természet."
+}
+
+### Összes (GET)
+GET {{Alkalmazas_HostAddress}}/api/catgirls
+
+### Egy cicálány (GET)
+GET {{Alkalmazas_HostAddress}}/api/catgirls/1
+
+### Módosítás (PUT)
+PUT {{Alkalmazas_HostAddress}}/api/catgirls/1
+Content-Type: application/json
+
+{
+  "name": "Mirci",
+  "age": 23,
+  "heightCm": 163,
+  "weightKg": 53,
+  "phone": "+36 30 123 4567",
+  "email": "mirci@pelda.hu",
+  "description": null
+}
+
+### Törlés (DELETE)
+DELETE {{Alkalmazas_HostAddress}}/api/catgirls/1
+
+### SAJÁT 1: keresés (GET) - minden paraméter elhagyható
+GET {{Alkalmazas_HostAddress}}/api/catgirls/search?name=mi&minAge=20&maxAge=30&minHeight=150&maxHeight=175
+
+### SAJÁT 2: statisztika (GET)
+GET {{Alkalmazas_HostAddress}}/api/catgirls/stats
+
+### ================= ORDERS =================
+
+### Rendelés leadása (POST)
+POST {{Alkalmazas_HostAddress}}/api/orders
+Content-Type: application/json
+
+{
+  "userId": 1,
+  "orderDate": "2026-12-01",
+  "location": "Budapest",
+  "catGirlIds": [1]
+}
+
+### Összes rendelés (GET)
+GET {{Alkalmazas_HostAddress}}/api/orders
+
+### Egy rendelés (GET)
+GET {{Alkalmazas_HostAddress}}/api/orders/1
+
+### Módosítás (PUT)
+PUT {{Alkalmazas_HostAddress}}/api/orders/1
+Content-Type: application/json
+
+{ "orderDate": "2026-12-05", "location": "Szeged" }
+
+### Törlés (DELETE)
+DELETE {{Alkalmazas_HostAddress}}/api/orders/1
+
+### SAJÁT: egy felhasználó rendelései (GET)
+GET {{Alkalmazas_HostAddress}}/api/orders/user/1
 
 ###

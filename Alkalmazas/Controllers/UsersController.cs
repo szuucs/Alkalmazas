@@ -18,20 +18,31 @@ namespace Alkalmazas.Controllers
             _db = db;
         }
 
-        [HttpGet("{name}")]
-        public async Task<ActionResult<UserResponse>> Login(string name, [FromQuery] string password)
+        // GET api/users
+        [HttpGet]
+        public async Task<ActionResult<List<UserResponse>>> GetAll()
         {
-            var user = await _db.Users.FirstOrDefaultAsync(u => u.Name == name);
+            return await _db.Users
+                .OrderBy(u => u.Name)
+                .Select(u => new UserResponse(u.Id, u.Name))
+                .ToListAsync();
+        }
 
-            if (user == null ||
-                _hasher.VerifyHashedPassword(user, user.PasswordHash, password) == PasswordVerificationResult.Failed)
+        // GET api/users/5
+        [HttpGet("{id:int}")]
+        public async Task<ActionResult<UserResponse>> GetById(int id)
+        {
+            var user = await _db.Users.FindAsync(id);
+
+            if (user == null)
             {
-                return Unauthorized("Hibás felhasználónév vagy jelszó.");
+                return NotFound("Nem található a felhasználó.");
             }
 
             return new UserResponse(user.Id, user.Name);
         }
 
+        // POST api/users   (regisztráció)
         [HttpPost]
         public async Task<ActionResult<UserResponse>> Register(RegisterRequest request)
         {
@@ -58,10 +69,91 @@ namespace Alkalmazas.Controllers
             }
             catch (DbUpdateException)
             {
+                // két egyszerre érkező regisztráció ugyanazzal a névvel
                 return Conflict("Ez a felhasználónév foglalt.");
             }
 
-            return StatusCode(StatusCodes.Status201Created, new UserResponse(user.Id, user.Name));
+            return CreatedAtAction(nameof(GetById), new { id = user.Id }, new UserResponse(user.Id, user.Name));
+        }
+
+        // PUT api/users/5   (név és/vagy jelszó módosítása; üres jelszónál a jelszó nem változik)
+        [HttpPut("{id:int}")]
+        public async Task<ActionResult<UserResponse>> Update(int id, UpdateUserRequest request)
+        {
+            var user = await _db.Users.FindAsync(id);
+
+            if (user == null)
+            {
+                return NotFound("Nem található a felhasználó.");
+            }
+
+            var name = request.Name.Trim();
+
+            if (name.Length < 3 || name.Length > 64)
+            {
+                return BadRequest("A név 3 és 64 karakter között legyen.");
+            }
+
+            if (!string.IsNullOrEmpty(request.Password) && request.Password.Length < 6)
+            {
+                return BadRequest("Az új jelszó legalább 6 karakter legyen.");
+            }
+
+            if (await _db.Users.AnyAsync(u => u.Name == name && u.Id != id))
+            {
+                return Conflict("Ez a felhasználónév foglalt.");
+            }
+
+            user.Name = name;
+
+            if (!string.IsNullOrEmpty(request.Password))
+            {
+                user.PasswordHash = _hasher.HashPassword(user, request.Password);
+            }
+
+            try
+            {
+                await _db.SaveChangesAsync();
+            }
+            catch (DbUpdateException)
+            {
+                return Conflict("Ez a felhasználónév foglalt.");
+            }
+
+            return new UserResponse(user.Id, user.Name);
+        }
+
+        // DELETE api/users/5   (a felhasználó rendelései is törlődnek)
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var user = await _db.Users.FindAsync(id);
+
+            if (user == null)
+            {
+                return NotFound("Nem található a felhasználó.");
+            }
+
+            _db.Users.Remove(user);
+            await _db.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        // SAJÁT FÜGGVÉNY: GET api/users/login?name=...&password=...   (bejelentkezés)
+        [HttpGet("login")]
+        public async Task<ActionResult<UserResponse>> Login([FromQuery] string name, [FromQuery] string password)
+        {
+            var trimmed = name.Trim();
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Name == trimmed);
+
+            if (user == null ||
+                _hasher.VerifyHashedPassword(user, user.PasswordHash, password) == PasswordVerificationResult.Failed)
+            {
+                return Unauthorized("Hibás felhasználónév vagy jelszó.");
+            }
+
+            return new UserResponse(user.Id, user.Name);
         }
     }
 }

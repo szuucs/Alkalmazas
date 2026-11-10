@@ -28,12 +28,14 @@ public sealed class ShellViewModel : ViewModelBase
 
     public ICommand CatalogCommand { get; }
     public ICommand CartCommand { get; }
+    public ICommand OrdersCommand { get; }
     public ICommand LogoutCommand { get; }
 
     public ShellViewModel()
     {
         CatalogCommand = new RelayCommand(GoCatalog);
         CartCommand = new RelayCommand(GoCart);
+        OrdersCommand = new RelayCommand(GoOrders);
         LogoutCommand = new RelayCommand(Logout);
         CurrentPage = new AuthViewModel(this);
     }
@@ -55,10 +57,24 @@ public sealed class ShellViewModel : ViewModelBase
         _ = page.LoadAsync();
     }
 
+    public void GoAddCatGirl()
+    {
+        if (!IsAuthenticated) return;
+        CurrentPage = new AddCatGirlViewModel(this);
+    }
+
     public void GoCart()
     {
         if (!IsAuthenticated) return;
         var page = new CartViewModel(this);
+        CurrentPage = page;
+        _ = page.LoadAsync();
+    }
+
+    public void GoOrders()
+    {
+        if (!IsAuthenticated) return;
+        var page = new OrdersViewModel(this);
         CurrentPage = page;
         _ = page.LoadAsync();
     }

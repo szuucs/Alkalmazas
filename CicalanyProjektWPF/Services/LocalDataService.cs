@@ -1,4 +1,5 @@
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 using Cicalany.Wpf.Models;
 
 namespace Cicalany.Wpf.Services;
@@ -14,7 +15,7 @@ public sealed class LocalDataService : IDataService
     private readonly List<CatGirlDto> _catGirls = new();
     private readonly List<CartRec> _cart = new();
     private readonly List<OrderRec> _orders = new();
-    private int _nextUserId = 1, _nextCartId = 1, _nextOrderId = 1;
+    private int _nextUserId = 1, _nextCatGirlId = 1, _nextCartId = 1, _nextOrderId = 1;
 
     public LocalDataService()
     {
@@ -56,6 +57,34 @@ public sealed class LocalDataService : IDataService
     public Task<List<CatGirlDto>> GetCatGirlsAsync() =>
         Task.FromResult(_catGirls.OrderBy(c => c.Name, StringComparer.CurrentCultureIgnoreCase).ToList());
 
+    public Task<CatGirlDto> CreateCatGirlAsync(CatGirlInput input)
+    {
+        var name = input.Name?.Trim() ?? "";
+        var description = input.Description?.Trim() ?? "";
+        if (name.Length == 0) throw new InvalidOperationException("A név megadása kötelező.");
+        if (name.Length > 100) throw new InvalidOperationException("A név legfeljebb 100 karakter lehet.");
+        if (input.Age is < 18 or > 40) throw new InvalidOperationException("Az életkor 18 és 40 év közé essen.");
+        if (input.HeightCm is < 130 or > 190) throw new InvalidOperationException("A magasság 130 és 190 cm közé essen.");
+        if (input.WeightKg is < 10 or > 300) throw new InvalidOperationException("A súly 10 és 300 kg közé essen.");
+        var phone = input.Phone?.Trim() ?? "";
+        var email = input.Email?.Trim() ?? "";
+        if (phone.Length == 0) throw new InvalidOperationException("A telefonszám megadása kötelező.");
+        if (!IsValidPhone(phone)) throw new InvalidOperationException("A telefonszám formátuma hibás (pl. +36 30 123 4567).");
+        if (email.Length == 0) throw new InvalidOperationException("Az e-mail cím megadása kötelező.");
+        if (email.Length > 200 || !Regex.IsMatch(email, @"^[^@\s]+@[^@\s]+\.[^@\s]+$"))
+            throw new InvalidOperationException("Az e-mail cím formátuma hibás (pl. nev@pelda.hu).");
+        if (description.Length > 1000) throw new InvalidOperationException("A leírás legfeljebb 1000 karakter lehet.");
+
+        var cat = new CatGirlDto
+        {
+            Id = _nextCatGirlId++, Name = name, Age = input.Age,
+            HeightCm = input.HeightCm, WeightKg = input.WeightKg, Description = description,
+            Phone = phone, Email = email
+        };
+        _catGirls.Add(cat);
+        return Task.FromResult(cat);
+    }
+
     // ---------- kosár ----------
 
     public Task<List<CartItemDto>> GetCartAsync(int userId) =>
@@ -81,6 +110,14 @@ public sealed class LocalDataService : IDataService
     }
 
     // ---------- rendelés ----------
+
+    // a legutóbbi rendelés van legelöl
+    public Task<List<OrderDto>> GetOrdersAsync(int userId) =>
+        Task.FromResult(_orders
+            .Where(o => o.UserId == userId)
+            .OrderByDescending(o => o.Id)
+            .Select(o => new OrderDto { Id = o.Id, OrderDate = o.Date, Location = o.Location, Lines = o.Lines })
+            .ToList());
 
     public Task<OrderDto> PlaceOrderAsync(int userId, DateTime date, string location)
     {
@@ -111,6 +148,10 @@ public sealed class LocalDataService : IDataService
 
     // ---------- segédek ----------
 
+    // Telefonszám: számjegyek, szóköz, kötőjel, zárójel és elöl egy + jel; legalább 7 számjegy.
+    private static bool IsValidPhone(string phone) =>
+        Regex.IsMatch(phone, @"^\+?[0-9\s\-()/]+$") && phone.Count(char.IsDigit) is >= 7 and <= 15;
+
     private UserRec AddUser(string name, string password)
     {
         var user = new UserRec(_nextUserId++, name, HashPassword(password));
@@ -121,7 +162,7 @@ public sealed class LocalDataService : IDataService
     private void AddCatGirl(string name, int age, double height, double weight) =>
         _catGirls.Add(new CatGirlDto
         {
-            Id = _catGirls.Count + 1, Name = name, Age = age,
+            Id = _nextCatGirlId++, Name = name, Age = age,
             HeightCm = height, WeightKg = weight
         });
 
