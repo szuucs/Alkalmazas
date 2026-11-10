@@ -8,7 +8,7 @@ namespace Cicalany.Wpf.ViewModels;
 /// <summary>A főablak nézetmodellje: ez tartja a bejelentkezési állapotot és azt, hogy melyik oldal látszik.</summary>
 public sealed class ShellViewModel : ViewModelBase
 {
-    // API nélküli mód. Az API bekötésekor ezt az egy sort kell cserélni.
+    // Bejelentkezés és regisztráció az API-n; a többi adat egyelőre helyi.
     public IDataService Api { get; } = new LocalDataService();
 
     private object _currentPage = null!;
@@ -23,7 +23,7 @@ public sealed class ShellViewModel : ViewModelBase
     private string _userName = "";
     public string UserName { get => _userName; private set => Set(ref _userName, value); }
 
-    private string _status = "Jelentkezz be vagy regisztrálj a kezdéshez. (Teszt belépés: demo / demo123)";
+    private string _status = "Jelentkezz be vagy regisztrálj a kezdéshez.";
     public string Status { get => _status; private set => Set(ref _status, value); }
 
     public ICommand CatalogCommand { get; }

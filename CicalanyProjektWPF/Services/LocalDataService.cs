@@ -1,25 +1,23 @@
-using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using Cicalany.Wpf.Models;
 
 namespace Cicalany.Wpf.Services;
 
-/// <summary>API nélküli adatforrás: minden a memóriában él, bezáráskor elvész.</summary>
+/// <summary>A hitelesítés API-alapú; a katalógus, kosár és rendelések még memóriában élnek.</summary>
 public sealed class LocalDataService : IDataService
 {
-    private sealed record UserRec(int Id, string UserName, string PasswordHash);
     private sealed record CartRec(int Id, int UserId, int CatGirlId);
     private sealed record OrderRec(int Id, int UserId, DateTime Date, string Location, List<OrderLineDto> Lines);
 
-    private readonly List<UserRec> _users = new();
+    private readonly ApiAuthService _authentication;
     private readonly List<CatGirlDto> _catGirls = new();
     private readonly List<CartRec> _cart = new();
     private readonly List<OrderRec> _orders = new();
-    private int _nextUserId = 1, _nextCatGirlId = 1, _nextCartId = 1, _nextOrderId = 1;
+    private int _nextCatGirlId = 1, _nextCartId = 1, _nextOrderId = 1;
 
-    public LocalDataService()
+    public LocalDataService(ApiAuthService? authentication = null)
     {
-        AddUser("demo", "demo123");
+        _authentication = authentication ?? new ApiAuthService();
 
         AddCatGirl("Mirci", 22, 163, 52);
         AddCatGirl("Szellő", 24, 170, 56);
@@ -33,24 +31,11 @@ public sealed class LocalDataService : IDataService
 
     // ---------- hitelesítés ----------
 
-    public Task<LoginResult> RegisterAsync(string userName, string password)
-    {
-        var name = userName?.Trim() ?? "";
-        if (name.Length is < 3 or > 64 || password is null || password.Length < 6)
-            throw new InvalidOperationException("A név legalább 3, a jelszó legalább 6 karakter legyen.");
-        if (_users.Any(u => string.Equals(u.UserName, name, StringComparison.OrdinalIgnoreCase)))
-            throw new InvalidOperationException("Ez a felhasználónév foglalt.");
-        return Task.FromResult(ToResult(AddUser(name, password)));
-    }
+    public Task<LoginResult> RegisterAsync(string userName, string password) =>
+        _authentication.RegisterAsync(userName, password);
 
-    public Task<LoginResult> LoginAsync(string userName, string password)
-    {
-        var name = userName?.Trim() ?? "";
-        var user = _users.FirstOrDefault(u => string.Equals(u.UserName, name, StringComparison.OrdinalIgnoreCase));
-        if (user is null || !VerifyPassword(password ?? "", user.PasswordHash))
-            throw new InvalidOperationException("Hibás felhasználónév vagy jelszó.");
-        return Task.FromResult(ToResult(user));
-    }
+    public Task<LoginResult> LoginAsync(string userName, string password) =>
+        _authentication.LoginAsync(userName, password);
 
     // ---------- katalógus ----------
 
@@ -152,22 +137,12 @@ public sealed class LocalDataService : IDataService
     private static bool IsValidPhone(string phone) =>
         Regex.IsMatch(phone, @"^\+?[0-9\s\-()/]+$") && phone.Count(char.IsDigit) is >= 7 and <= 15;
 
-    private UserRec AddUser(string name, string password)
-    {
-        var user = new UserRec(_nextUserId++, name, HashPassword(password));
-        _users.Add(user);
-        return user;
-    }
-
     private void AddCatGirl(string name, int age, double height, double weight) =>
         _catGirls.Add(new CatGirlDto
         {
             Id = _nextCatGirlId++, Name = name, Age = age,
             HeightCm = height, WeightKg = weight
         });
-
-    private static LoginResult ToResult(UserRec user) =>
-        new() { UserName = user.UserName, UserId = user.Id };
 
     private CartItemDto ToDto(CartRec item)
     {
@@ -179,20 +154,4 @@ public sealed class LocalDataService : IDataService
         };
     }
 
-    private static string HashPassword(string password)
-    {
-        var salt = RandomNumberGenerator.GetBytes(16);
-        var hash = Rfc2898DeriveBytes.Pbkdf2(password, salt, 100_000, HashAlgorithmName.SHA256, 32);
-        return Convert.ToBase64String(salt) + "." + Convert.ToBase64String(hash);
-    }
-
-    private static bool VerifyPassword(string password, string stored)
-    {
-        var parts = stored.Split('.');
-        if (parts.Length != 2) return false;
-        var salt = Convert.FromBase64String(parts[0]);
-        var correct = Convert.FromBase64String(parts[1]);
-        var actual = Rfc2898DeriveBytes.Pbkdf2(password, salt, 100_000, HashAlgorithmName.SHA256, correct.Length);
-        return CryptographicOperations.FixedTimeEquals(correct, actual);
-    }
 }

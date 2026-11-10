@@ -15,6 +15,9 @@ namespace Models
     // Regisztrációkor ezt küldi a kliens (POST api/users)
     public record RegisterRequest(string Name, string Password);
 
+    // Bejelentkezéskor ezt küldi a kliens (POST api/users/login)
+    public record LoginRequest(string Name, string Password);
+
     // Módosításkor: új név, és opcionálisan új jelszó (PUT api/users/{id})
     public record UpdateUserRequest(string Name, string? Password);
 

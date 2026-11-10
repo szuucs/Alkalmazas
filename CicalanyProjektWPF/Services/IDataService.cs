@@ -3,8 +3,8 @@ using Cicalany.Wpf.Models;
 namespace Cicalany.Wpf.Services;
 
 /// <summary>
-/// A WPF az adatait ezen a felületen keresztül éri el. Most a LocalDataService valósítja meg
-/// (memóriában, API nélkül), később egy API-t hívó osztályra cserélhető a ShellViewModel-ben.
+/// A WPF az adatait ezen a felületen keresztül éri el. A LocalDataService a hitelesítést
+/// az API-n végzi, a katalógust, kosarat és rendeléseket egyelőre memóriában tárolja.
 /// Token nincs: ahol kell, a hívó adja át a bejelentkezett felhasználó azonosítóját.
 /// </summary>
 public interface IDataService

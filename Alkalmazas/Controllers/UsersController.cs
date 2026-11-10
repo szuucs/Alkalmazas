@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Models;
+using MySql.Data.MySqlClient;
 
 namespace Alkalmazas.Controllers
 {
@@ -46,6 +47,11 @@ namespace Alkalmazas.Controllers
         [HttpPost]
         public async Task<ActionResult<UserResponse>> Register(RegisterRequest request)
         {
+            if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrEmpty(request.Password))
+            {
+                return BadRequest("A felhasználónév és a jelszó kötelező.");
+            }
+
             var name = request.Name.Trim();
 
             if (name.Length < 3 || name.Length > 64 || request.Password.Length < 6)
@@ -67,7 +73,7 @@ namespace Alkalmazas.Controllers
             {
                 await _db.SaveChangesAsync();
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException ex) when (ex.InnerException is MySqlException { Number: 1062 })
             {
                 // két egyszerre érkező regisztráció ugyanazzal a névvel
                 return Conflict("Ez a felhasználónév foglalt.");
@@ -80,6 +86,11 @@ namespace Alkalmazas.Controllers
         [HttpPut("{id:int}")]
         public async Task<ActionResult<UserResponse>> Update(int id, UpdateUserRequest request)
         {
+            if (string.IsNullOrWhiteSpace(request.Name))
+            {
+                return BadRequest("A felhasználónév kötelező.");
+            }
+
             var user = await _db.Users.FindAsync(id);
 
             if (user == null)
@@ -115,7 +126,7 @@ namespace Alkalmazas.Controllers
             {
                 await _db.SaveChangesAsync();
             }
-            catch (DbUpdateException)
+            catch (DbUpdateException ex) when (ex.InnerException is MySqlException { Number: 1062 })
             {
                 return Conflict("Ez a felhasználónév foglalt.");
             }
@@ -140,20 +151,37 @@ namespace Alkalmazas.Controllers
             return NoContent();
         }
 
-        // SAJÁT FÜGGVÉNY: GET api/users/login?name=...&password=...   (bejelentkezés)
-        [HttpGet("login")]
-        public async Task<ActionResult<UserResponse>> Login([FromQuery] string name, [FromQuery] string password)
+        // SAJÁT FÜGGVÉNY: POST api/users/login   (bejelentkezés JSON törzzsel)
+        [HttpPost("login")]
+        public async Task<ActionResult<UserResponse>> Login([FromBody] LoginRequest request)
         {
-            var trimmed = name.Trim();
-            var user = await _db.Users.FirstOrDefaultAsync(u => u.Name == trimmed);
+            if (string.IsNullOrWhiteSpace(request.Name) || string.IsNullOrEmpty(request.Password))
+            {
+                return BadRequest("A felhasználónév és a jelszó kötelező.");
+            }
 
-            if (user == null ||
-                _hasher.VerifyHashedPassword(user, user.PasswordHash, password) == PasswordVerificationResult.Failed)
+            var name = request.Name.Trim();
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.Name == name);
+
+            if (user == null)
             {
                 return Unauthorized("Hibás felhasználónév vagy jelszó.");
             }
 
-            return new UserResponse(user.Id, user.Name);
+            var result = _hasher.VerifyHashedPassword(user, user.PasswordHash, request.Password);
+
+            if (result == PasswordVerificationResult.Failed)
+            {
+                return Unauthorized("Hibás felhasználónév vagy jelszó.");
+            }
+
+            if (result == PasswordVerificationResult.SuccessRehashNeeded)
+            {
+                user.PasswordHash = _hasher.HashPassword(user, request.Password);
+                await _db.SaveChangesAsync();
+            }
+
+            return Ok(new UserResponse(user.Id, user.Name));
         }
     }
 }

@@ -23,8 +23,11 @@ Content-Type: application/json
 ### Törlés (DELETE)
 DELETE {{Alkalmazas_HostAddress}}/api/users/1
 
-### SAJÁT: bejelentkezés (GET)
-GET {{Alkalmazas_HostAddress}}/api/users/login?name=teszt&password=teszt123
+### SAJÁT: bejelentkezés (POST)
+POST {{Alkalmazas_HostAddress}}/api/users/login
+Content-Type: application/json
+
+{ "name": "teszt", "password": "teszt123" }
 
 ### ================= CATGIRLS =================
 
