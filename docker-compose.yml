@@ -1,0 +1,15 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: alkalmazas-db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: jelszo
+      MYSQL_DATABASE: Alkalmazas
+    ports:
+      - "3309:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  db_data:
