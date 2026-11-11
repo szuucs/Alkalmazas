@@ -77,7 +77,7 @@ namespace Alkalmazas.Controllers
             var order = new Order
             {
                 UserId = request.UserId,
-                OrderDate = request.OrderDate.Date,
+                OrderDate = request.OrderDate,
                 Location = CleanLocation(request.Location),
                 CreatedAtUtc = DateTime.UtcNow
             };
@@ -119,7 +119,7 @@ namespace Alkalmazas.Controllers
                 return BadRequest(error);
             }
 
-            order.OrderDate = request.OrderDate.Date;
+            order.OrderDate = request.OrderDate;
             order.Location = CleanLocation(request.Location);
 
             await _db.SaveChangesAsync();
@@ -166,16 +166,23 @@ namespace Alkalmazas.Controllers
         private static string CleanLocation(string? location) =>
             string.IsNullOrWhiteSpace(location) ? "Online" : location.Trim();
 
-        private static OrderResponse ToResponse(Order order) =>
-            new OrderResponse(
+        private static OrderResponse ToResponse(Order order)
+        {
+            var lines = order.Lines
+                .OrderBy(l => l.Id)
+                .Select(l => new OrderLineResponse(
+                    l.CatGirlId, l.Name, l.Age, l.HeightCm, l.WeightKg, l.Price, l.DurationHours))
+                .ToList();
+
+            return new OrderResponse(
                 order.Id,
                 order.UserId,
                 order.OrderDate,
                 order.Location,
                 order.CreatedAtUtc,
-                order.Lines
-                    .OrderBy(l => l.Id)
-                    .Select(l => new OrderLineResponse(l.CatGirlId, l.Name, l.Age, l.HeightCm, l.WeightKg))
-                    .ToList());
+                lines,
+                lines.Sum(l => l.Price),
+                lines.Count == 0 ? CatGirl.DefaultDurationHours : lines.Max(l => l.DurationHours));
+        }
     }
 }

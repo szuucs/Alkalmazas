@@ -44,7 +44,7 @@ namespace Alkalmazas.Controllers
         [HttpPost]
         public Task<ActionResult<CatGirl>> Create(CatGirlRequest request) => CreateCatGirl(request, null);
 
-        // Az űrlap adatait és a választható képet egy kérésben fogadja.
+        // Az űrlap adatait és a kötelező fényképet egy kérésben fogadja.
         [HttpPost("with-image")]
         public async Task<ActionResult<CatGirl>> CreateWithImage([FromForm] string details, IFormFile? image)
         {
@@ -53,6 +53,7 @@ namespace Alkalmazas.Controllers
             try { request = JsonSerializer.Deserialize<CatGirlRequest>(details, new JsonSerializerOptions(JsonSerializerDefaults.Web)); }
             catch (JsonException) { return BadRequest("A hirdetés adatai nem olvashatók."); }
             if (request == null) return BadRequest("A hirdetés adatai kötelezők.");
+            if (image == null || image.Length == 0) return BadRequest("A fénykép feltöltése kötelező.");
             return await CreateCatGirl(request, image);
         }
 

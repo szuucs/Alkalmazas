@@ -82,7 +82,9 @@ public sealed class ShellViewModel : ViewModelBase
     public void GoCheckout()
     {
         if (!IsAuthenticated) return;
-        CurrentPage = new CheckoutViewModel(this);
+        var page = new CheckoutViewModel(this);
+        CurrentPage = page;
+        _ = page.LoadAsync();
     }
 
     public void ShowMessage(string message) => Status = message;

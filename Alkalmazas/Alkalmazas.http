@@ -82,7 +82,7 @@ Content-Type: application/json
 
 {
   "userId": 1,
-  "orderDate": "2026-12-01",
+  "orderDate": "2026-12-01T18:00:00",
   "location": "Budapest",
   "catGirlIds": [1]
 }
@@ -97,7 +97,7 @@ GET {{Alkalmazas_HostAddress}}/api/orders/1
 PUT {{Alkalmazas_HostAddress}}/api/orders/1
 Content-Type: application/json
 
-{ "orderDate": "2026-12-05", "location": "Szeged" }
+{ "orderDate": "2026-12-05T13:31:00", "location": "Szeged" }
 
 ### Törlés (DELETE)
 DELETE {{Alkalmazas_HostAddress}}/api/orders/1

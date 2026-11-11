@@ -42,16 +42,15 @@ public sealed class ApiDataService : IDataService
             input.Name, input.Age, input.HeightCm, input.WeightKg,
             input.Phone, input.Email, input.Description
         })), "details");
-        if (!string.IsNullOrWhiteSpace(input.ImagePath))
+        if (string.IsNullOrWhiteSpace(input.ImagePath))
+            throw new InvalidOperationException("A fénykép feltöltése kötelező.");
+        try
         {
-            try
-            {
-                form.Add(new StreamContent(File.OpenRead(input.ImagePath)), "image", Path.GetFileName(input.ImagePath));
-            }
-            catch (Exception error) when (error is IOException or UnauthorizedAccessException)
-            {
-                throw new InvalidOperationException("A kiválasztott kép nem olvasható. Válaszd ki újra.", error);
-            }
+            form.Add(new StreamContent(File.OpenRead(input.ImagePath)), "image", Path.GetFileName(input.ImagePath));
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException)
+        {
+            throw new InvalidOperationException("A kiválasztott kép nem olvasható. Válaszd ki újra.", error);
         }
         var cat = await SendAsync<CatGirlDto>(HttpMethod.Post, "api/catgirls/with-image", form);
         SetImageAddress(cat);
@@ -88,7 +87,7 @@ public sealed class ApiDataService : IDataService
         if (items.Count == 0) throw new InvalidOperationException("Üres a kosár.");
         var order = await SendAsync<OrderDto>(HttpMethod.Post, "api/orders", JsonContent.Create(new
         {
-            userId, orderDate = date.Date, location,
+            userId, orderDate = date, location,
             catGirlIds = items.Select(x => x.Cat.Id).ToList()
         }));
         // Csak sikeres mentés után ürítjük a leadott tételeket.
@@ -130,6 +129,7 @@ public sealed class ApiDataService : IDataService
     private static CartItemDto ToDto(CartRec item) => new()
     {
         Id = item.Id, CatGirlId = item.Cat.Id, Name = item.Cat.Name, Age = item.Cat.Age,
-        HeightCm = item.Cat.HeightCm, WeightKg = item.Cat.WeightKg
+        HeightCm = item.Cat.HeightCm, WeightKg = item.Cat.WeightKg,
+        Price = item.Cat.Price, DurationHours = item.Cat.DurationHours
     };
 }

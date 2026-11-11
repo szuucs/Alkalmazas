@@ -43,6 +43,9 @@
                                            Foreground="{StaticResource AccentBrush}" />
                                 <TextBlock Text="{Binding Summary}" Foreground="{StaticResource MutedBrush}"
                                            FontSize="12" Margin="0,6,0,0" />
+                                <TextBlock FontWeight="SemiBold" Margin="0,6,0,0">
+                                    <Run Text="{Binding PriceLabel, Mode=OneWay}" Foreground="{StaticResource AccentBrush}" /><Run Text="  •  " /><Run Text="{Binding DurationLabel, Mode=OneWay}" />
+                                </TextBlock>
                                 <TextBlock Text="{Binding Description}" Foreground="{StaticResource MutedBrush}"
                                            FontSize="12" FontStyle="Italic" TextWrapping="Wrap" MaxHeight="52"
                                            TextTrimming="CharacterEllipsis" Margin="0,8,0,0"

@@ -36,21 +36,28 @@ try
     File.WriteAllBytes(temporaryImage, png);
     var created = await api.CreateCatGirlAsync(Input("Uploaded check", 300, 500, temporaryImage));
     cats.Add(created.Id);
-    File.Delete(temporaryImage);
+    Check(created.Price == 20000 && created.DurationHours == 2, "Default price/duration are missing.");
     Check((await http.GetByteArrayAsync(created.ImagePath)).SequenceEqual(png), "Uploaded picture changed or was not saved.");
-    var minimum = await api.CreateCatGirlAsync(Input("Minimum check", 0, 0));
+    var minimum = await api.CreateCatGirlAsync(Input("Minimum check", 0, 0, temporaryImage));
     cats.Add(minimum.Id);
-    Check(minimum.ImagePath is null, "Optional image should stay empty.");
-    var fraction = await api.CreateCatGirlAsync(Input("Decimal check", 150.5, 60.5));
+    Check(minimum.ImagePath is not null, "The uploaded image is required and must be saved.");
+    await Reject(() => api.CreateCatGirlAsync(Input("No image check", 150, 50)));
+    var fraction = await api.CreateCatGirlAsync(Input("Decimal check", 150.5, 60.5, temporaryImage));
     cats.Add(fraction.Id);
     Check(fraction.HeightCm == 150.5 && fraction.WeightKg == 60.5, "Decimal values changed with Hungarian culture.");
 
     var newSession = new ApiDataService(http);
     Check((await newSession.GetCatGirlsAsync()).Any(cat => cat.Id == created.Id && cat.ImagePath == created.ImagePath), "Advertisement was not persisted.");
     foreach (var (height, weight) in new[] { (-0.1, 50d), (300.1, 50d), (150d, -0.1), (150d, 500.1) })
-        await Reject(() => api.CreateCatGirlAsync(Input("Invalid check", height, weight)));
+        await Reject(() => api.CreateCatGirlAsync(Input("Invalid check", height, weight, temporaryImage)));
     File.WriteAllText(unsupportedFile, "Unsupported file type.");
     await Reject(() => api.CreateCatGirlAsync(Input("File type check", 150, 50, unsupportedFile)));
+    using (var noImage = new MultipartFormDataContent())
+    {
+        noImage.Add(new StringContent("{\"name\":\"No image\",\"age\":22,\"heightCm\":150,\"weightKg\":50,\"phone\":\"+36 30 123 4567\",\"email\":\"check@example.com\"}"), "details");
+        using var response = await http.PostAsync("api/catgirls/with-image", noImage);
+        Check(response.StatusCode == System.Net.HttpStatusCode.BadRequest, "A missing image should return 400.");
+    }
     using (var malformed = new MultipartFormDataContent())
     {
         malformed.Add(new StringContent("{invalid JSON"), "details");
@@ -64,8 +71,14 @@ try
     await Reject(() => api.AddToCartAsync(login.UserId, created.Id));
     await Reject(() => api.PlaceOrderAsync(login.UserId, DateTime.Today.AddDays(-1), "Test"));
     Check((await api.GetCartAsync(login.UserId)).Count == 1, "Failed checkout cleared the cart.");
-    var order = await api.PlaceOrderAsync(login.UserId, DateTime.Today.AddDays(1), "Budapest");
+    await Reject(() => api.PlaceOrderAsync(login.UserId, DateTime.Now.AddHours(-1), "Test"));
+    var start = DateTime.Today.AddDays(1).AddHours(18);
+    var order = await api.PlaceOrderAsync(login.UserId, start, "Budapest");
     orders.Add(order.Id);
+    Check(order.OrderDate == start, "The chosen time of day was not saved.");
+    Check(order.TotalPrice == 20000 && order.DurationHours == 2, "Order total or duration is wrong.");
+    Check(order.TimeLabel == "18-20", "Whole-hour slot label is wrong.");
+    Check(TimeSlot.Range(DateTime.Today.AddHours(13).AddMinutes(31), 2) == "13:31-15:31", "Slot label with minutes is wrong.");
     Check(order.Lines.Count == 1 && order.Lines[0].CatGirlId == created.Id && order.Lines[0].Name == created.Name, "Order lines were not saved.");
     Check((await api.GetCartAsync(login.UserId)).Count == 0, "Successful checkout did not clear submitted items.");
     Check((await api.GetCartAsync(other.UserId)).Count == 1, "Checkout touched another user's cart.");
@@ -78,7 +91,7 @@ try
     })) update.EnsureSuccessStatusCode();
     Check((await newSession.GetCatGirlsAsync()).Single(cat => cat.Id == created.Id).ImagePath == created.ImagePath, "Editing details removed the image.");
     Check((await newSession.GetOrdersAsync(login.UserId)).Single(saved => saved.Id == order.Id).Lines[0].Name == created.Name, "Editing an advertisement changed a past order.");
-    Console.WriteLine("PASS: API catalog/images, login, advertisement/image persistence, optional image, numeric boundaries/decimals, file-type check, cart isolation, failed/successful checkout and order history.");
+    Console.WriteLine("PASS: API catalog/images, login, advertisement/image persistence, required image, default price/duration, order time slots, numeric boundaries/decimals, file-type check, cart isolation, failed/successful checkout and order history.");
 }
 catch (Exception error)
 {

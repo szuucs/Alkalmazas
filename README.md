@@ -14,7 +14,9 @@ Mindhárom erőforrásnál van teljes CRUD (GET lista, GET egy elem, POST, PUT, 
 | `api/catgirls` | GET, GET `{id}`, POST, PUT `{id}`, DELETE `{id}` | GET `search?name=&minAge=&maxAge=&minHeight=&maxHeight=`, GET `stats` |
 | `api/orders` | GET, GET `{id}`, POST, PUT `{id}`, DELETE `{id}` | GET `user/{userId}` |
 
-A képes hirdetéshez a WPF `POST api/catgirls/with-image` kérést küld: a multipart űrlap `details` mezője a JSON-adatokat, a választható `image` mező a képfájlt tartalmazza.
+A hirdetés feladásakor a WPF `POST api/catgirls/with-image` kérést küld: a multipart űrlap `details` mezője a JSON-adatokat, a kötelező `image` mező a fényképet tartalmazza (kép nélkül 400-as hibát kap).
+
+Minden cicálány ára alapból 20 000 Ft, és 2 órát vállal (`Models/CatGirl.cs`: `DefaultPrice`, `DefaultDurationHours`). A rendelés `orderDate` mezője a foglalás kezdő időpontja (dátum és óra), pl. `2026-12-01T18:00:00`; a WPF a rendelés előtt kiírja az idősávot (pl. `18-20` vagy `13:31-15:31`) és azt, hogy a fizetés a helyszínen történik.
 
 Példa kérések: `Alkalmazas/Alkalmazas.http`.
 
@@ -41,7 +43,7 @@ dotnet run --project CicalanyProjektWPF
 
 Az API címe a `CicalanyProjektWPF/Services/ApiAuthService.cs` fájlban állítható.
 Csak a még le nem adott kosár marad a WPF alkalmazás memóriájában. Sikeres rendelés után a leadott tételek kikerülnek belőle; hiba esetén megmaradnak.
-Az új cicalány űrlapján a „Kép kiválasztása” gombbal JPG vagy PNG kép is megadható.
+Az új cicalány űrlapján a „Kép kiválasztása” gombbal JPG vagy PNG fénykép megadása kötelező.
 A kép előnézete az űrlapon, mentés után pedig a katalógusban látható.
 Az API a képfájlt az `Alkalmazas/App_Data/Images` mappába,
 az elérési útját pedig az adatbázisba menti. A WPF a képeket HTTP-n keresztül tölti le.

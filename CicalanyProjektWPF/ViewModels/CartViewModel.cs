@@ -14,6 +14,7 @@ public sealed class CartViewModel : ViewModelBase
     public CartItemDto? SelectedItem { get => _selectedItem; set => Set(ref _selectedItem, value); }
 
     public bool HasItems => Items.Count > 0;
+    public string TotalLabel => $"{Items.Sum(item => item.Price):N0} Ft";
     public string CountLabel => HasItems ? $"{Items.Count} cicálány a kosárban" : "A kosarad üres.";
 
     public ICommand RemoveCommand { get; }
@@ -36,6 +37,7 @@ public sealed class CartViewModel : ViewModelBase
             SelectedItem = Items.FirstOrDefault();
             Notify(nameof(HasItems));
             Notify(nameof(CountLabel));
+            Notify(nameof(TotalLabel));
         }
         catch (Exception error) { _shell.ShowError(error); }
     }

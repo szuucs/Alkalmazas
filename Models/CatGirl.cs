@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Models
 {
@@ -24,6 +25,17 @@ namespace Models
 
         [MaxLength(1000)]
         public string? Description { get; set; }
+
+        // Alapértelmezések: minden cicálány ára 20 000 Ft, és 2 órát vállal.
+        // Egy helyen vannak, nem az adatbázisban (ha később cicálányonként más ár kell, oszlopot adunk hozzá).
+        public const int DefaultPrice = 20000;
+        public const int DefaultDurationHours = 2;
+
+        [NotMapped]
+        public int Price => DefaultPrice;
+
+        [NotMapped]
+        public int DurationHours => DefaultDurationHours;
     }
 
     // Létrehozáskor és módosításkor ezt küldi a kliens (a leírás nem kötelező)

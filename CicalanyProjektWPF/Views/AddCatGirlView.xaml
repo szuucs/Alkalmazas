@@ -27,11 +27,14 @@
                 <TextBlock Text="E-mail *" Margin="0,18,0,8" />
                 <TextBox Text="{Binding Email, UpdateSourceTrigger=PropertyChanged}" MaxLength="200" />
 
+                <TextBlock Margin="0,18,0,0" Foreground="{StaticResource AccentBrush}" FontWeight="SemiBold"
+                           Text="Az ára alapból 20 000 Ft, és 2 órát vállal." />
+
                 <TextBlock Text="Leírás (nem kötelező)" Margin="0,18,0,8" />
                 <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}" MaxLength="1000"
                          Height="100" TextWrapping="Wrap" AcceptsReturn="True" VerticalScrollBarVisibility="Auto" />
 
-                <TextBlock Text="Kép (nem kötelező, JPG vagy PNG)" Margin="0,18,0,8" />
+                <TextBlock Text="Fénykép * (kötelező, JPG vagy PNG)" Margin="0,18,0,8" />
                 <Button Content="Kép kiválasztása" Command="{Binding ChooseImageCommand}" HorizontalAlignment="Left" />
                 <Image Source="{Binding ImagePreview}" MaxHeight="180" Stretch="Uniform" Margin="0,12,0,0"
                        AutomationProperties.Name="Kiválasztott kép előnézete">

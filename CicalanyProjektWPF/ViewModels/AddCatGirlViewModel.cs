@@ -8,7 +8,7 @@ using Microsoft.Win32;
 
 namespace Cicalany.Wpf.ViewModels;
 
-/// <summary>Új cicálány felvétele. A név, életkor, magasság és súly kötelező, a leírás nem.</summary>
+/// <summary>Új cicálány felvétele. A név, életkor, magasság, súly, elérhetőség és a fénykép kötelező, a leírás nem.</summary>
 public sealed class AddCatGirlViewModel : ViewModelBase
 {
     private readonly ShellViewModel _shell;
@@ -75,6 +75,7 @@ public sealed class AddCatGirlViewModel : ViewModelBase
         var weight = ParseNumber(Weight, "A súly", "kg");
         if (string.IsNullOrWhiteSpace(Phone)) throw new InvalidOperationException("A telefonszám megadása kötelező.");
         if (string.IsNullOrWhiteSpace(Email)) throw new InvalidOperationException("Az e-mail cím megadása kötelező.");
+        if (string.IsNullOrWhiteSpace(_imagePath)) throw new InvalidOperationException("A fénykép feltöltése kötelező.");
 
         var created = await _shell.Api.CreateCatGirlAsync(new CatGirlInput(name, age, height, weight, Phone, Email, Description, _imagePath));
         _shell.GoCatalog();

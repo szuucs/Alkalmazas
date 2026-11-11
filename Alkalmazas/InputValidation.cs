@@ -36,7 +36,7 @@ namespace Alkalmazas
 
         public static string? CheckOrder(DateTime orderDate, string? location)
         {
-            if (orderDate.Date < DateTime.Today) return "A rendelés dátuma nem lehet korábbi a mainál.";
+            if (orderDate < DateTime.Now) return "A rendelés időpontja nem lehet korábbi a mostaninál.";
             if ((location ?? "").Trim().Length > 200) return "A helyszín legfeljebb 200 karakter lehet.";
             return null;
         }

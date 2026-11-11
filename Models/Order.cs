@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Models
 {
@@ -35,16 +36,23 @@ namespace Models
         public int Age { get; set; }
         public double HeightCm { get; set; }
         public double WeightKg { get; set; }
+
+        [NotMapped]
+        public int Price => CatGirl.DefaultPrice;
+
+        [NotMapped]
+        public int DurationHours => CatGirl.DefaultDurationHours;
     }
 
-    // POST api/orders
+    // POST api/orders   (az orderDate a foglalás kezdő időpontja: dátum és óra)
     public record OrderRequest(int UserId, DateTime OrderDate, string? Location, List<int> CatGirlIds);
 
     // PUT api/orders/{id}
     public record OrderUpdateRequest(DateTime OrderDate, string? Location);
 
-    public record OrderLineResponse(int CatGirlId, string Name, int Age, double HeightCm, double WeightKg);
+    public record OrderLineResponse(int CatGirlId, string Name, int Age, double HeightCm, double WeightKg,
+        int Price, int DurationHours);
 
     public record OrderResponse(int Id, int UserId, DateTime OrderDate, string Location,
-        DateTime CreatedAtUtc, List<OrderLineResponse> Lines);
+        DateTime CreatedAtUtc, List<OrderLineResponse> Lines, int TotalPrice, int DurationHours);
 }

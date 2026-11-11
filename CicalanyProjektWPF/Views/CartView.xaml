@@ -18,6 +18,8 @@
                 <DataGridTextColumn Header="Életkor" Binding="{Binding AgeLabel}" Width="110" />
                 <DataGridTextColumn Header="Magasság" Binding="{Binding HeightLabel}" Width="120" />
                 <DataGridTextColumn Header="Súly" Binding="{Binding WeightLabel}" Width="110" />
+                <DataGridTextColumn Header="Időtartam" Binding="{Binding DurationLabel}" Width="110" />
+                <DataGridTextColumn Header="Ár" Binding="{Binding PriceLabel}" Width="130" />
             </DataGrid.Columns>
         </DataGrid>
         <Border Grid.Row="2" Background="{StaticResource CardBrush}" CornerRadius="8" Padding="20" Margin="0,18,0,0">
@@ -27,7 +29,13 @@
                     <Button Content="Rendelés" Command="{Binding CheckoutCommand}" Style="{StaticResource PrimaryButton}"
                             IsEnabled="{Binding HasItems}" Margin="0" />
                 </StackPanel>
-                <TextBlock Text="{Binding CountLabel}" FontSize="19" FontWeight="Bold" VerticalAlignment="Center" />
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="{Binding CountLabel}" FontSize="19" FontWeight="Bold" />
+                    <TextBlock FontSize="17" FontWeight="SemiBold" Margin="0,4,0,0">
+                        <Run Text="Végösszeg: " /><Run Text="{Binding TotalLabel, Mode=OneWay}" Foreground="{StaticResource AccentBrush}" />
+                    </TextBlock>
+                    <TextBlock Text="Fizetés a helyszínen." Foreground="{StaticResource MutedBrush}" Margin="0,4,0,0" />
+                </StackPanel>
             </DockPanel>
         </Border>
     </Grid>

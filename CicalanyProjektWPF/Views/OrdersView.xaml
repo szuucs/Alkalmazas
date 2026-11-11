@@ -14,13 +14,22 @@
                         <Border Background="{StaticResource CardBrush}" CornerRadius="10" Padding="22,18"
                                 Margin="0,0,10,16">
                             <StackPanel>
-                                <TextBlock FontSize="21" FontWeight="Bold" Foreground="{StaticResource AccentBrush}">
-                                    <Run Text="Rendelés #" /><Run Text="{Binding Id, Mode=OneWay}" />
-                                </TextBlock>
-                                <TextBlock Foreground="{StaticResource MutedBrush}" Margin="0,6,0,16">
+                                <DockPanel>
+                                    <TextBlock DockPanel.Dock="Right" Text="{Binding TotalLabel}" FontSize="19" FontWeight="Bold"
+                                               Foreground="{StaticResource AccentBrush}" />
+                                    <TextBlock FontSize="21" FontWeight="Bold" Foreground="{StaticResource AccentBrush}">
+                                        <Run Text="Rendelés #" /><Run Text="{Binding Id, Mode=OneWay}" />
+                                    </TextBlock>
+                                </DockPanel>
+                                <TextBlock Foreground="{StaticResource MutedBrush}" Margin="0,6,0,0">
                                     <Run Text="Dátum: " /><Run Text="{Binding DateLabel, Mode=OneWay}" />
-                                    <Run Text="     Helyszín: " /><Run Text="{Binding Location, Mode=OneWay}" />
+                                    <Run Text="     Időpont: " /><Run Text="{Binding TimeLabel, Mode=OneWay}" />
                                 </TextBlock>
+                                <TextBlock Foreground="{StaticResource MutedBrush}" Margin="0,2,0,0">
+                                    <Run Text="Helyszín: " /><Run Text="{Binding Location, Mode=OneWay}" />
+                                    <Run Text="     Fizetés a helyszínen." />
+                                </TextBlock>
+                                <Border Height="16" />
 
                                 <Grid Margin="10,0,0,6">
                                     <Grid.ColumnDefinitions>
@@ -28,11 +37,13 @@
                                         <ColumnDefinition Width="110" />
                                         <ColumnDefinition Width="120" />
                                         <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="120" />
                                     </Grid.ColumnDefinitions>
                                     <TextBlock Grid.Column="0" Text="Cicálány" Foreground="{StaticResource MutedBrush}" FontSize="12" />
                                     <TextBlock Grid.Column="1" Text="Életkor" Foreground="{StaticResource MutedBrush}" FontSize="12" />
                                     <TextBlock Grid.Column="2" Text="Magasság" Foreground="{StaticResource MutedBrush}" FontSize="12" />
                                     <TextBlock Grid.Column="3" Text="Súly" Foreground="{StaticResource MutedBrush}" FontSize="12" />
+                                    <TextBlock Grid.Column="4" Text="Ár" Foreground="{StaticResource MutedBrush}" FontSize="12" />
                                 </Grid>
                                 <ItemsControl ItemsSource="{Binding Lines}">
                                     <ItemsControl.ItemTemplate>
@@ -44,11 +55,13 @@
                                         <ColumnDefinition Width="110" />
                                         <ColumnDefinition Width="120" />
                                         <ColumnDefinition Width="100" />
+                                        <ColumnDefinition Width="120" />
                                                     </Grid.ColumnDefinitions>
                                                     <TextBlock Grid.Column="0" Text="{Binding Name}" FontWeight="SemiBold" />
                                                     <TextBlock Grid.Column="1" Text="{Binding AgeLabel}" />
                                                     <TextBlock Grid.Column="2" Text="{Binding HeightLabel}" />
                                                     <TextBlock Grid.Column="3" Text="{Binding WeightLabel}" />
+                                                    <TextBlock Grid.Column="4" Text="{Binding PriceLabel}" />
                                                 </Grid>
                                             </Border>
                                         </DataTemplate>
