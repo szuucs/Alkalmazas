@@ -1,9 +1,5 @@
 # Alkalmazas
 
-ASP.NET Core Web API (MySQL, Entity Framework Core) és egy WPF kliens (CicalanyProjektWPF).
-
-Teljesen kezdőknek szóló, angol nyelvű magyarázat az indítástól a kód működéséig: [How this project works](PROJECT_GUIDE.md).
-
 ## Végpontok
 
 Mindhárom erőforrásnál van teljes CRUD (GET lista, GET egy elem, POST, PUT, DELETE) és saját függvény.
