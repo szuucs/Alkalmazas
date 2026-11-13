@@ -84,7 +84,10 @@ Content-Type: application/json
   "userId": 1,
   "orderDate": "2026-12-01T18:00:00",
   "location": "Budapest",
-  "catGirlIds": [1]
+  "catGirlIds": [1],
+  "customerName": "Teszt Elek",
+  "customerEmail": "elek@pelda.hu",
+  "customerPhone": "+36 30 123 4567"
 }
 
 ### Összes rendelés (GET)

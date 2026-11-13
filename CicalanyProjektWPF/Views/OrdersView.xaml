@@ -29,6 +29,10 @@
                                     <Run Text="Helyszín: " /><Run Text="{Binding Location, Mode=OneWay}" />
                                     <Run Text="     Fizetés a helyszínen." />
                                 </TextBlock>
+                                <TextBlock Foreground="{StaticResource MutedBrush}" Margin="0,2,0,0"
+                                           Visibility="{Binding HasContact, Converter={StaticResource BoolToVisibility}}">
+                                    <Run Text="Megrendelő: " /><Run Text="{Binding ContactLabel, Mode=OneWay}" />
+                                </TextBlock>
                                 <Border Height="16" />
 
                                 <Grid Margin="10,0,0,6">

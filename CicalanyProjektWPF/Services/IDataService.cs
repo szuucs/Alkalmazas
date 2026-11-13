@@ -19,6 +19,6 @@ public interface IDataService
     Task<CartItemDto> AddToCartAsync(int userId, int catGirlId);
     Task RemoveFromCartAsync(int userId, int cartItemId);
 
-    Task<OrderDto> PlaceOrderAsync(int userId, DateTime date, string location);
+    Task<OrderDto> PlaceOrderAsync(int userId, DateTime date, string location, OrderContact contact);
     Task<List<OrderDto>> GetOrdersAsync(int userId);
 }

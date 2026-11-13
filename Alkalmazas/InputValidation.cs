@@ -34,6 +34,22 @@ namespace Alkalmazas
             return null;
         }
 
+        // A megrendelő adatai: név, e-mail és telefonszám is kötelező
+        public static string? CheckContact(string? name, string? email, string? phone)
+        {
+            var cleanName = name?.Trim() ?? "";
+            var cleanEmail = email?.Trim() ?? "";
+            var cleanPhone = phone?.Trim() ?? "";
+
+            if (cleanName.Length == 0) return "A név megadása kötelező.";
+            if (cleanName.Length > 100) return "A név legfeljebb 100 karakter lehet.";
+            if (cleanEmail.Length == 0) return "Az e-mail cím megadása kötelező.";
+            if (!IsValidEmail(cleanEmail)) return "Az e-mail cím formátuma hibás (pl. nev@pelda.hu).";
+            if (cleanPhone.Length == 0) return "A telefonszám megadása kötelező.";
+            if (cleanPhone.Length > 30 || !IsValidPhone(cleanPhone)) return "A telefonszám formátuma hibás (pl. +36 30 123 4567).";
+            return null;
+        }
+
         public static string? CheckOrder(DateTime orderDate, string? location)
         {
             if (orderDate < DateTime.Now) return "A rendelés időpontja nem lehet korábbi a mostaninál.";

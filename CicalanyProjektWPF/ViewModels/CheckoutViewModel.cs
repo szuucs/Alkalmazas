@@ -23,9 +23,15 @@ public sealed class CheckoutViewModel : ViewModelBase
     private int _itemCount;
     private int _total;
     private int _durationHours = 2;
+    private string _customerName = "";
+    private string _customerEmail = "";
+    private string _customerPhone = "";
 
     public string DateText { get => _dateText; set => Set(ref _dateText, value); }
     public string Location { get => _location; set => Set(ref _location, value); }
+    public string CustomerName { get => _customerName; set => Set(ref _customerName, value); }
+    public string CustomerEmail { get => _customerEmail; set => Set(ref _customerEmail, value); }
+    public string CustomerPhone { get => _customerPhone; set => Set(ref _customerPhone, value); }
 
     public string TimeText
     {
@@ -124,7 +130,12 @@ public sealed class CheckoutViewModel : ViewModelBase
         if (!TryParseTime(TimeText, out var time))
             throw new InvalidOperationException("Az időpont formátuma hibás. Például: 18:00");
 
-        var order = await _shell.Api.PlaceOrderAsync(_shell.UserId, date.Date + time, Location);
+        if (string.IsNullOrWhiteSpace(CustomerName)) throw new InvalidOperationException("A név megadása kötelező.");
+        if (string.IsNullOrWhiteSpace(CustomerEmail)) throw new InvalidOperationException("Az e-mail cím megadása kötelező.");
+        if (string.IsNullOrWhiteSpace(CustomerPhone)) throw new InvalidOperationException("A telefonszám megadása kötelező.");
+
+        var contact = new OrderContact(CustomerName.Trim(), CustomerEmail.Trim(), CustomerPhone.Trim());
+        var order = await _shell.Api.PlaceOrderAsync(_shell.UserId, date.Date + time, Location, contact);
         _shell.GoCatalog();
         _shell.ShowMessage($"Rendelés #{order.Id} leadva: {order.DateLabel}, {order.TimeLabel} ({order.Lines.Count} cicálány). Fizetés a helyszínen.");
     }

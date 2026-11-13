@@ -81,14 +81,15 @@ public sealed class ApiDataService : IDataService
     public Task<List<OrderDto>> GetOrdersAsync(int userId) =>
         SendAsync<List<OrderDto>>(HttpMethod.Get, $"api/orders/user/{userId}");
 
-    public async Task<OrderDto> PlaceOrderAsync(int userId, DateTime date, string location)
+    public async Task<OrderDto> PlaceOrderAsync(int userId, DateTime date, string location, OrderContact contact)
     {
         var items = _cart.Where(x => x.UserId == userId).ToList();
         if (items.Count == 0) throw new InvalidOperationException("Üres a kosár.");
         var order = await SendAsync<OrderDto>(HttpMethod.Post, "api/orders", JsonContent.Create(new
         {
             userId, orderDate = date, location,
-            catGirlIds = items.Select(x => x.Cat.Id).ToList()
+            catGirlIds = items.Select(x => x.Cat.Id).ToList(),
+            customerName = contact.Name, customerEmail = contact.Email, customerPhone = contact.Phone
         }));
         // Csak sikeres mentés után ürítjük a leadott tételeket.
         _cart.RemoveAll(items.Contains);

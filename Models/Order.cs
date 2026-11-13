@@ -15,6 +15,16 @@ namespace Models
         [MaxLength(200)]
         public string Location { get; set; } = "Online";
 
+        // A megrendelő adatai (a rendelés leadásakor kötelezők)
+        [MaxLength(100)]
+        public string CustomerName { get; set; } = string.Empty;
+
+        [MaxLength(200)]
+        public string CustomerEmail { get; set; } = string.Empty;
+
+        [MaxLength(30)]
+        public string CustomerPhone { get; set; } = string.Empty;
+
         public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
 
         public List<OrderLine> Lines { get; set; } = new();
@@ -45,7 +55,8 @@ namespace Models
     }
 
     // POST api/orders   (az orderDate a foglalás kezdő időpontja: dátum és óra)
-    public record OrderRequest(int UserId, DateTime OrderDate, string? Location, List<int> CatGirlIds);
+    public record OrderRequest(int UserId, DateTime OrderDate, string? Location, List<int> CatGirlIds,
+        string CustomerName, string CustomerEmail, string CustomerPhone);
 
     // PUT api/orders/{id}
     public record OrderUpdateRequest(DateTime OrderDate, string? Location);
@@ -54,5 +65,6 @@ namespace Models
         int Price, int DurationHours);
 
     public record OrderResponse(int Id, int UserId, DateTime OrderDate, string Location,
-        DateTime CreatedAtUtc, List<OrderLineResponse> Lines, int TotalPrice, int DurationHours);
+        DateTime CreatedAtUtc, List<OrderLineResponse> Lines, int TotalPrice, int DurationHours,
+        string CustomerName, string CustomerEmail, string CustomerPhone);
 }

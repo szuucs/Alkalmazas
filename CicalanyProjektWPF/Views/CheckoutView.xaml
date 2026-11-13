@@ -59,12 +59,27 @@
                 <TextBlock Text="{Binding DurationText}" Foreground="{StaticResource MutedBrush}" FontSize="12"
                            Margin="0,4,0,0" />
 
+                <TextBlock Text="Név *" Margin="0,22,0,8" />
+                <TextBox Text="{Binding CustomerName, UpdateSourceTrigger=PropertyChanged}" MaxLength="100" />
+
+                <TextBlock Text="E-mail *" Margin="0,18,0,8" />
+                <TextBox Text="{Binding CustomerEmail, UpdateSourceTrigger=PropertyChanged}" MaxLength="200" />
+
+                <TextBlock Text="Telefonszám *" Margin="0,18,0,8" />
+                <TextBox Text="{Binding CustomerPhone, UpdateSourceTrigger=PropertyChanged}" MaxLength="30" />
+
                 <TextBlock Text="Helyszín" Margin="0,22,0,8" />
                 <TextBox Text="{Binding Location, UpdateSourceTrigger=PropertyChanged}" MaxLength="200" />
 
                 <TextBlock Text="Fizetés a helyszínen." Foreground="{StaticResource AccentBrush}" FontWeight="SemiBold"
                            Margin="0,24,0,0" />
-                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+
+                <Border Background="#33000000" CornerRadius="8" Padding="14,12" Margin="0,16,0,0">
+                    <TextBlock FontWeight="SemiBold" TextWrapping="Wrap"
+                               Text="Szolgáltatásunk kizárólag társasági és szórakoztató jellegű." />
+                </Border>
+
+                <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
                     <Button Content="Rendelés véglegesítése" Style="{StaticResource PrimaryButton}"
                             Command="{Binding ConfirmCommand}" />
                     <Button Content="Vissza" Command="{Binding BackCommand}" />

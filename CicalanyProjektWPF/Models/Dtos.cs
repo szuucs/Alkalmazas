@@ -69,7 +69,12 @@ public sealed class OrderDto
     public string Location { get; set; } = "";
     public int TotalPrice { get; set; }
     public int DurationHours { get; set; } = 2;
+    public string CustomerName { get; set; } = "";
+    public string CustomerEmail { get; set; } = "";
+    public string CustomerPhone { get; set; } = "";
     public List<OrderLineDto> Lines { get; set; } = new();
+    public bool HasContact => !string.IsNullOrWhiteSpace(CustomerName);
+    public string ContactLabel => $"{CustomerName}  •  {CustomerEmail}  •  {CustomerPhone}";
     public string DateLabel => OrderDate.ToString("yyyy. MM. dd.");
     public string TimeLabel => TimeSlot.Range(OrderDate, DurationHours);
     public string TotalLabel => $"{TotalPrice:N0} Ft";
@@ -78,6 +83,9 @@ public sealed class OrderDto
 /// <summary>Új cicálány adatai (a leírás nem kötelező, a kép kötelező).</summary>
 public sealed record CatGirlInput(string Name, int Age, double HeightCm, double WeightKg,
     string Phone, string Email, string? Description, string? ImagePath = null);
+
+/// <summary>A megrendelő adatai a rendelés leadásakor (mind kötelező).</summary>
+public sealed record OrderContact(string Name, string Email, string Phone);
 
 public static class TimeSlot
 {

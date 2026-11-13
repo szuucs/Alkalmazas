@@ -16,7 +16,7 @@ Mindhárom erőforrásnál van teljes CRUD (GET lista, GET egy elem, POST, PUT, 
 
 A hirdetés feladásakor a WPF `POST api/catgirls/with-image` kérést küld: a multipart űrlap `details` mezője a JSON-adatokat, a kötelező `image` mező a fényképet tartalmazza (kép nélkül 400-as hibát kap).
 
-Minden cicálány ára alapból 20 000 Ft, és 2 órát vállal (`Models/CatGirl.cs`: `DefaultPrice`, `DefaultDurationHours`). A rendelés `orderDate` mezője a foglalás kezdő időpontja (dátum és óra), pl. `2026-12-01T18:00:00`; a WPF a rendelés előtt kiírja az idősávot (pl. `18-20` vagy `13:31-15:31`) és azt, hogy a fizetés a helyszínen történik.
+Minden cicálány ára alapból 20 000 Ft, és 2 órát vállal (`Models/CatGirl.cs`: `DefaultPrice`, `DefaultDurationHours`). A rendelés `orderDate` mezője a foglalás kezdő időpontja (dátum és óra), pl. `2026-12-01T18:00:00`; a rendeléshez a megrendelő neve, e-mail címe és telefonszáma kötelező (`customerName`, `customerEmail`, `customerPhone`); a WPF a rendelés előtt kiírja az idősávot (pl. `18-20` vagy `13:31-15:31`) és azt, hogy a fizetés a helyszínen történik.
 
 Példa kérések: `Alkalmazas/Alkalmazas.http`.
 

@@ -48,7 +48,8 @@ namespace Alkalmazas.Controllers
         [HttpPost]
         public async Task<ActionResult<OrderResponse>> Create(OrderRequest request)
         {
-            var error = InputValidation.CheckOrder(request.OrderDate, request.Location);
+            var error = InputValidation.CheckOrder(request.OrderDate, request.Location)
+                ?? InputValidation.CheckContact(request.CustomerName, request.CustomerEmail, request.CustomerPhone);
 
             if (error != null)
             {
@@ -79,6 +80,9 @@ namespace Alkalmazas.Controllers
                 UserId = request.UserId,
                 OrderDate = request.OrderDate,
                 Location = CleanLocation(request.Location),
+                CustomerName = request.CustomerName.Trim(),
+                CustomerEmail = request.CustomerEmail.Trim(),
+                CustomerPhone = request.CustomerPhone.Trim(),
                 CreatedAtUtc = DateTime.UtcNow
             };
 
@@ -182,7 +186,10 @@ namespace Alkalmazas.Controllers
                 order.CreatedAtUtc,
                 lines,
                 lines.Sum(l => l.Price),
-                lines.Count == 0 ? CatGirl.DefaultDurationHours : lines.Max(l => l.DurationHours));
+                lines.Count == 0 ? CatGirl.DefaultDurationHours : lines.Max(l => l.DurationHours),
+                order.CustomerName,
+                order.CustomerEmail,
+                order.CustomerPhone);
         }
     }
 }
